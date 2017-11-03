@@ -1,0 +1,20 @@
+# Various issues that should be refactored.
+
+## detection Functions
+Each detector tech has a detection function. These have a number of implicit dependencies that
+make things tough to debug.
+
+Primarily, the MIR detection function depends on atm. You index into atm to find atmospheric
+parameters, using the current index from time. time has both an integer index and a fractional
+day current_time, and they are not automatically synced. So there is really no guarantee they
+don't drift apart.
+
+There is no member function to advance time. That is done externally, for example in line 218 of
+field_simulation.py
+
+The detection probability for the MIR detector depends on the atmospheric conditions, which are
+indexed with the index from the time object. If you aren't careful, I think it would be pretty
+easy to set those up differently; the constructor takes a number of steps, but not a time object.
+You better pass in the number of steps in the time object that you are planning to use, or it
+will crash.
+
