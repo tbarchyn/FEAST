@@ -1,0 +1,20 @@
+# Simulating extreme-value distributions
+
+The same issues that plague emission data collection in the field plague its simulation. The
+frequency of large leaks is very low, but their importance dominates the results. This means that
+ large numbers of sites have to be simulated to get statistically meaningful results.
+
+One challenge to that is the constraint of memory and disk space. In order to keep individual sim
+ sizes reasonable, it's nice to keep the number of sites in a simulation at around 100. Because
+every batch of 100 sites is independent, N realizations of 100 sites is the same as 1 realization
+ of N*100 sites. However, in order for this to work, we must "sum first then divide." That is, to
+  find the ratio of the LeakSurveyor method to the baseline, instead of finding N ratios and
+ averaging them, we must sum all the emission reduction from LeakSurveyor in the N realizations,
+ then sum all the emission reduction from the baseline in the N realizations, and then take the
+ ratio.
+
+ The reason for this is that the former method weights by simulation, while the latter weights by
+  emission. Of course, in our analysis the simulation distinction is entirely artificial, so we
+  don't want to be weighting on that.  If we do, it has the effect of overweighting the many
+  realizations with no large leaks, and confining the effect of a rare large leak to a single
+  realization.

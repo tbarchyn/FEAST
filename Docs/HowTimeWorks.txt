@@ -1,0 +1,40 @@
+# How the Time object works in FEAST
+
+There are a number of different kinds of timing things that we want to keep track of in FEAST.
+Only some of those are in the Time object.
+
+Generally, you should think of there being a single Time object instantiation for the simulation.
+ It's not a singleton class, but it acts like one. That's the thing that governs the overall
+ simulation.  It gets passed into member functions of Detector classes over and over, so that the
+  detector knows what time it is. There are likely better structures for doing this.
+
+In particular, note that even though the Time object gets passed into the constructor of the
+Detector objects, that doesn't mean you can make a new Time object with particular properties
+that pertain to that detector. Again, think of Time as a singleton, and it will make more sense.
+
+The poorly documented `delta_t` element of Time should be thought of as the smallest possible
+timestep that the simulation takes. This is the timestep on which new leaks appear, and the
+timestep at which random leakfinding (the Null technology) works.
+
+## Survey Intervals
+AD, IR, and FID have a detector member variable called `survey_interval`. This is the number of
+days between successive surveys. It decides this by looking at the remainder of the current time
+divided by the survey interval, and checking if that's less than the time step `delta_t`. So far
+so good.
+
+This has the effect that for a survey_interval of N, *all* wells are surveyed on day N. That's
+kinda silly, but fine. On the other hand, the Null technology works every time step, no matter
+what. So it's really being treated differently than any other technology.
+
+Does that make a real difference? The Null model gets slightly more effective when the existing
+leak population is higher, so having all the AD surveys happen on a single day means the leaks
+build up, and Null becomes slightly more effective. But it probably cancels out immediately after
+ the AD survey, so it probably doesn't matter too much.
+
+Also, the Null technology is weird for another reason: its detection function gets called by the
+actual Null technology, but also by many of the other detectors.
+
+## Coding issues
+So, in a time object, the current time is kept by both an integer index time_index, and a float
+fractional day value current_time. There is nothing to guarantee these two stay in sync.
+
