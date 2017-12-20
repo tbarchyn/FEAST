@@ -8,8 +8,8 @@ import numpy as np
 def coord_transform(theta, x, y):
     """
     Transforms coordinates so that x is measured in the direction of the wind.
-    NOTE: coord_transform updates the x and y values passed to the function. The original values
-        are returned as x_save and y_save
+    NOTE: coord_transform updates the x and y values passed to the function. The original values are returned as
+        x_save and y_save
     Inputs:
         x: an array of floats
         y: an array of floats
@@ -23,8 +23,8 @@ def coord_transform(theta, x, y):
     sin_theta, cos_theta = np.sin(theta), np.cos(theta)
     x_save, y_save = copy.copy(x), copy.copy(y)
     for ind in range(0, len(x)):
-        x[ind] = x_save[ind] * sin_theta + y_save[ind] * cos_theta
-        y[ind] = -x_save[ind] * cos_theta + y_save[ind] * sin_theta
+        x[ind] = x_save[ind]*sin_theta + y_save[ind]*cos_theta
+        y[ind] = -x_save[ind]*cos_theta + y_save[ind]*sin_theta
     return x_save, y_save
 
 
